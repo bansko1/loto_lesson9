@@ -10,9 +10,8 @@ cart_param = 9  # сколько чисел в карточке 9, 12, 15 (в т
 
 class Random_map:  # Создание класса карточки лото
 
-    def __init__(self):  # Свойства класса карточки (содержание карточки)
+    def __init__(self, param, cart_param):  # Свойства класса карточки (содержание карточки)
         list_main = random.sample(list(range(1, param + 1)), cart_param)
-        # print(list_main)
         list_01 = list_main[:cart_param // 3]
         list_01.sort()
         self.list_1 = list_01
@@ -59,50 +58,51 @@ def prn():  # Распечатывание двух карточек
     print('*******************')
 
 
-card_man = Random_map()
-card_comp = Random_map()
+if __name__ == "__main__":
+    card_man = Random_map(param, cart_param)
+    card_comp = Random_map(param, cart_param)
 
-list_digit = list(range(1, param + 1))
-for n in range(param):  # Проход по всем бочонкам
-    digit = random.choice(list_digit)
-    list_digit.remove(digit)
-    print(f'Новый бочонок: {digit}, (осталось {param - 1 - n})')
-    prn()
+    list_digit = list(range(1, param + 1))
+    for n in range(param):  # Проход по всем бочонкам
+        digit = random.choice(list_digit)
+        list_digit.remove(digit)
+        print(f'Новый бочонок: {digit}, (осталось {param - 1 - n})')
+        prn()
 
-    letter = input('Зачеркнуть цифру? (y/n)')
-    if letter == 'y':
-        if not card_man.examin(digit):
-            # print(not card_man.change(digit))
-            print('Вы проиграли. Цифры нет в карточке')
+        letter = input('Зачеркнуть цифру? (y/n)')
+        if letter == 'y':
+            if not card_man.examin(digit):
+                # print(not card_man.change(digit))
+                print('Вы проиграли. Цифры нет в карточке')
+                break
+            # Определяем есть ли в карточке число digit и убираем его в карточке игрока, если есть
+            card_man.change(digit)
+        if card_man.examin(digit):
+            print('Вы проиграли. Цифра есть в карточке')
             break
-        # Определяем есть ли в карточке число digit и убираем его в карточке игрока, если есть
-        card_man.change(digit)
-    if card_man.examin(digit):
-        print('Вы проиграли. Цифра есть в карточке')
-        break
-    # Определяем есть ли в карточке digit и убираем ее в карточке компьютера
-    card_comp.change(digit)
+        # Определяем есть ли в карточке digit и убираем ее в карточке компьютера
+        card_comp.change(digit)
 
-    # Проверяем условия окончания игры
-    card_men_1str = card_man.list_1
-    card_men_2str = card_man.list_2
-    card_men_3str = card_man.list_3
-    card_comp_1str = card_comp.list_1
-    card_comp_2str = card_comp.list_2
-    card_comp_3str = card_comp.list_3
+        # Проверяем условия окончания игры
+        card_men_1str = card_man.list_1
+        card_men_2str = card_man.list_2
+        card_men_3str = card_man.list_3
+        card_comp_1str = card_comp.list_1
+        card_comp_2str = card_comp.list_2
+        card_comp_3str = card_comp.list_3
 
-    if not (card_men_1str or card_men_2str or card_men_3str) and (
-            card_comp_1str or card_comp_2str or card_comp_3str):
-        prn()
-        print('Вы выиграли. Поздравляем!')
-        break
-    elif (card_men_1str or card_men_2str or card_men_3str) and not (
-            card_comp_1str or card_comp_2str or card_comp_3str):
-        prn()
-        print('Вы проиграли. Компьютер раньше.')
-        break
-    elif not (
-            card_men_1str or card_men_2str or card_men_3str or card_comp_1str or card_comp_2str or card_comp_3str):
-        prn()
-        print('Ничья. Редкий случай.')
-        break
+        if not (card_men_1str or card_men_2str or card_men_3str) and (
+                card_comp_1str or card_comp_2str or card_comp_3str):
+            prn()
+            print('Вы выиграли. Поздравляем!')
+            break
+        elif (card_men_1str or card_men_2str or card_men_3str) and not (
+                card_comp_1str or card_comp_2str or card_comp_3str):
+            prn()
+            print('Вы проиграли. Компьютер раньше.')
+            break
+        elif not (
+                card_men_1str or card_men_2str or card_men_3str or card_comp_1str or card_comp_2str or card_comp_3str):
+            prn()
+            print('Ничья. Редкий случай.')
+            break
