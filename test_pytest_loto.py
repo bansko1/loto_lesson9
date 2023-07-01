@@ -1,24 +1,24 @@
-from loto_oop import Random_map
+from loto_oop_magic import Random_map
 
 
 class TestRandom_map:
 
-    def test_examin1(self):
+    def test_in1(self):
         card_dog = Random_map(30, 9)
         # card_dog.print_card()
         # assert False
         try:
-            assert card_dog.examin(31)
+            assert '31' in card_dog
         except:
             assert True
         else:
             assert False
 
-    def test_examin2(self):
+    def test_in2(self):
         card_dog = Random_map(60, 15)
 
         try:
-            assert card_dog.examin(61)
+            assert 61 in card_dog
         except AssertionError:
             assert True
         else:
@@ -34,3 +34,10 @@ class TestRandom_map:
         card_dog = Random_map(30, 15)
         assert card_dog.list_1[0] < card_dog.list_1[1]
         assert card_dog.list_1[1] < card_dog.list_1[2]
+
+    def test_eq(self):
+        card_cat = Random_map(30, 15)
+        card_mouse = Random_map(30, 15)
+        card_dog = card_cat
+        assert card_cat == card_dog
+        assert card_cat != card_mouse
