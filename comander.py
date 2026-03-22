@@ -1,3 +1,5 @@
+#import pickle
+#import os
 import random
 from loto_oop import Random_map
 from bill_oop import Bill
@@ -10,7 +12,13 @@ def prn():  # Распечатывание двух карточек
     card_comp.print_card()
     print('*******************')
 
-#bill = Bill()
+#FILE_NAME = 'bills_pickle.data'
+
+#bills = []
+#if os.path.exists(FILE_NAME):
+#    with open(FILE_NAME, 'rb') as f:
+#        bills = pickle.load(f)
+
 while True:
     print('Меню игры:')
     print('1 - Открыть счет для игрока.')
@@ -22,17 +30,18 @@ while True:
     choise = input('Выберите действие из списка выше - ')
     if choise == '1':
         name = input('Введите имя игрока:')
-        #count = int(input('Внесите сумму:'))
         bill = Bill(name)
         count = int(input(f'Внесите сумму:'))
         bill.money = count
+        #bills.append(bill)
+        
     if choise == '2':
         count = int(input(f'Внесите сумму:'))
         bill.add(count)
     if choise == '3':
         print(f'Остаток на {bill} - {bill.money} единиц.')
     if choise == '4':
-        if bill.money <= 0:
+        if bill.money == 0:
             print(f'Игра в долг не допускается.')
             count = int(input(f'Внесите на {bill} сумму:'))
             if count <= bill.money:
@@ -43,13 +52,13 @@ while True:
         if my_bet > bill.money:
             print(f'Пополните {bill}')
             count = int(input(f'Внесите сумму не менее {my_bet - bill.money} :'))
-
+            bill.add(count)
             if count < my_bet - bill.money:
                 print(f'На {bill} недостаточно средств для ставки {my_bet} едениц.')
+                
                 print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
                 break
-            bill.add(count)
-
+            
         bill.bet(my_bet)
         print(f'{bill.name} играет в лотто. Ставка {my_bet} единиц.')
 
@@ -106,5 +115,7 @@ while True:
                 bill.add(my_bet)
                 break
     if choise == '5':
+        #with open('bill.data', 'wb') as f:
+        #    pickle.dump(bill.money, f)
         print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
         break
