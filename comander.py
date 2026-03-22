@@ -17,24 +17,42 @@ while True:
     print('2 - Пополнить счет на сумму.')
     print('3 - Узнать сумму на счете.')
     print('4 - Играть в лотто.')
-    print('5 - Закончить игру.')
+    print('5 - Закрыть счет и закончить игру.')
     print('*************')
     choise = input('Выберите действие из списка выше - ')
     if choise == '1':
         name = input('Введите имя игрока:')
+        #count = int(input('Внесите сумму:'))
         bill = Bill(name)
         count = int(input(f'Внесите сумму:'))
-        bill.add(count)        
+        bill.money = count
     if choise == '2':
         count = int(input(f'Внесите сумму:'))
         bill.add(count)
     if choise == '3':
         print(f'Остаток на {bill} - {bill.money} единиц.')
     if choise == '4':
-        my_bet = int(input(f'Сделайте ставку за {bill}:'))
+        if bill.money <= 0:
+            print(f'Игра в долг не допускается.')
+            count = int(input(f'Внесите на {bill} сумму:'))
+            if count <= bill.money:
+                print(f'Заканчиваем игру. Долг по {bill} - {bill.money} едениц. Игра с долгом не допускается.')
+                break
+            bill.add(count)
+        my_bet = int(input(f'Сделайте ставку по {bill}:'))
+        if my_bet > bill.money:
+            print(f'Пополните {bill}')
+            count = int(input(f'Внесите сумму не менее {my_bet - bill.money} :'))
+
+            if count < my_bet - bill.money:
+                print(f'На {bill} недостаточно средств для ставки {my_bet} едениц.')
+                print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
+                break
+            bill.add(count)
+
         bill.bet(my_bet)
         print(f'{bill.name} играет в лотто. Ставка {my_bet} единиц.')
-    #if choise == '4':
+
         param = 30  # сколько всего бочонков 30, 60, 90
         cart_param = 9  # сколько чисел в карточке 9, 12, 15 (в три ряда по возрастанию)
 
@@ -84,7 +102,7 @@ while True:
             elif not (
                     card_men_1str or card_men_2str or card_men_3str or card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Ничья. {my_bet} единиц возвращены на {bill}.')
+                print(f'Ничья. Ставка возвращается.')
                 bill.add(my_bet)
                 break
     if choise == '5':
