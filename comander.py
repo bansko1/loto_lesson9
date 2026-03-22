@@ -10,25 +10,30 @@ def prn():  # Распечатывание двух карточек
     card_comp.print_card()
     print('*******************')
 
-my_bill = Bill()
+#bill = Bill()
 while True:
     print('Меню игры:')
-    print('1 - Пополнить счет на сумму.')
-    print('2 - Узнать сумму на счете.')
-    print('3 - Играть в лотто.')
-    #print('4 - Играть в лото.')
+    print('1 - Открыть счет для игрока.')
+    print('2 - Пополнить счет на сумму.')
+    print('3 - Узнать сумму на счете.')
+    print('4 - Играть в лотто.')
     print('5 - Закончить игру.')
     print('*************')
     choise = input('Выберите действие из списка выше - ')
     if choise == '1':
-        count = int(input('Внесите на счет сумму:'))
-        my_bill.add(count)
+        name = input('Введите имя игрока:')
+        bill = Bill(name)
+        count = int(input(f'Внесите сумму:'))
+        bill.add(count)        
     if choise == '2':
-        print(f'Сумма на счете {my_bill.money} единиц.')
+        count = int(input(f'Внесите сумму:'))
+        bill.add(count)
     if choise == '3':
-        my_bet = int(input('Сделайте ставку:'))
-        my_bill.bet(my_bet)
-        print(f'Вы играете в лотто. Ставка {my_bet} единиц.')
+        print(f'Остаток на {bill} - {bill.money} единиц.')
+    if choise == '4':
+        my_bet = int(input(f'Сделайте ставку за {bill}:'))
+        bill.bet(my_bet)
+        print(f'{bill.name} играет в лотто. Ставка {my_bet} единиц.')
     #if choise == '4':
         param = 30  # сколько всего бочонков 30, 60, 90
         cart_param = 9  # сколько чисел в карточке 9, 12, 15 (в три ряда по возрастанию)
@@ -47,12 +52,12 @@ while True:
             if letter == 'y':
                 if not card_man.examin(digit):
                     # print(not card_man.change(digit))
-                    print(f'Цифры нет в карточке. Вы проиграли - ставка потеряна.')
+                    print(f'Цифры нет в карточке. {bill.name} проиграл - ставка потеряна.')
                     break
                 # Определяем есть ли в карточке число digit и убираем его в карточке игрока, если есть
                 card_man.change(digit)
             if card_man.examin(digit):
-                print('Цифра есть в карточке. Вы проиграли - ставка потеряна.')
+                print(f'Цифра есть в карточке. {bill.name} проиграл - ставка потеряна.')
                 break
             # Определяем есть ли в карточке digit и убираем ее в карточке компьютера
             card_comp.change(digit)
@@ -68,20 +73,20 @@ while True:
             if not (card_men_1str or card_men_2str or card_men_3str) and (
                     card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Вы выиграли. На счет добавлено {my_bet} единиц. Поздравляем!')
-                my_bill.add(2*my_bet)
+                print(f'{bill.name} выиграл {my_bet} + {my_bet} единиц. Поздравляем!!!')
+                bill.add(2*my_bet)
                 break
             elif (card_men_1str or card_men_2str or card_men_3str) and not (
                     card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Компьютер раньше. Вы проиграли - ставка потеряна. ')
+                print(f'Компьютер раньше. {bill.name} проиграл - ставка потеряна. ')
                 break
             elif not (
                     card_men_1str or card_men_2str or card_men_3str or card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Ничья. {my_bet} единиц возвращены на счет.')
-                my_bill.add(my_bet)
+                print(f'Ничья. {my_bet} единиц возвращены на {bill}.')
+                bill.add(my_bet)
                 break
     if choise == '5':
-        print(f'Заканчиваем игру. На счете {my_bill.money} едениц.')
+        print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
         break
