@@ -19,7 +19,7 @@ class Bill:
     
     def add(self, count):
         self.money += count
-        print(f'Вносим на {self} {count} единиц.')
+        #print(f'Вносим на {self} {count} единиц.')
     
     def bet(self, count):
         self.money -= count

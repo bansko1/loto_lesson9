@@ -1,5 +1,5 @@
-#import pickle
-#import os
+import json
+import os
 import random
 from loto_oop import Random_map
 from bill_oop import Bill
@@ -12,16 +12,16 @@ def prn():  # Распечатывание двух карточек
     card_comp.print_card()
     print('*******************')
 
-#FILE_NAME = 'bills_pickle.data'
+FILE_NAME = 'bills.json'
 
-#bills = []
-#if os.path.exists(FILE_NAME):
-#    with open(FILE_NAME, 'rb') as f:
-#        bills = pickle.load(f)
+bills = {}
+if os.path.exists(FILE_NAME):
+        with open(FILE_NAME, 'r') as f:
+            bills = json.load(f)
 
 while True:
     print('Меню игры:')
-    print('1 - Открыть счет для игрока.')
+    print('1 - Проверить есть ли счет у игрока. Если есть - открыть его, если нет - открыть новый счет для игрока.')
     print('2 - Пополнить счет на сумму.')
     print('3 - Узнать сумму на счете.')
     print('4 - Играть в лотто.')
@@ -30,10 +30,16 @@ while True:
     choise = input('Выберите действие из списка выше - ')
     if choise == '1':
         name = input('Введите имя игрока:')
-        bill = Bill(name)
-        count = int(input(f'Внесите сумму:'))
-        bill.money = count
-        #bills.append(bill)
+        if name not in bills:
+            bill = Bill(name)
+            count = int(input(f'Внесите сумму:'))
+            bill.money = count
+            bills[name] = count
+            print(f'Игроку {name} открыт на {count} единиц.')
+        else:
+            bill = Bill(name)
+            bill.money = bills[name]
+            print(f'У игрока {name} есть счет на {bills[name]} единиц.')
         
     if choise == '2':
         count = int(input(f'Внесите сумму:'))
@@ -46,6 +52,9 @@ while True:
             count = int(input(f'Внесите на {bill} сумму:'))
             if count <= bill.money:
                 print(f'Заканчиваем игру. Долг по {bill} - {bill.money} едениц. Игра с долгом не допускается.')
+                bills[bill.name] = bill.money
+                with open(FILE_NAME, 'w') as f:
+                    json.dump(bills, f)
                 break
             bill.add(count)
         my_bet = int(input(f'Сделайте ставку по {bill}:'))
@@ -55,8 +64,10 @@ while True:
             bill.add(count)
             if count < my_bet - bill.money:
                 print(f'На {bill} недостаточно средств для ставки {my_bet} едениц.')
-                
                 print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
+                bills[bill.name] = bill.money
+                with open(FILE_NAME, 'w') as f:
+                    json.dump(bills, f)
                 break
             
         bill.bet(my_bet)
@@ -114,8 +125,10 @@ while True:
                 print(f'Ничья. Ставка возвращается.')
                 bill.add(my_bet)
                 break
+            
     if choise == '5':
-        #with open('bill.data', 'wb') as f:
-        #    pickle.dump(bill.money, f)
         print(f'Заканчиваем игру. На {bill} остаток {bill.money} едениц.')
+        bills[bill.name] = bill.money
+        with open(FILE_NAME, 'w') as f:
+            json.dump(bills, f)
         break
