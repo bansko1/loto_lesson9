@@ -2,7 +2,7 @@ class Bill:
     def __init__(self, name):
         self.name = name
         self._money = 0
-        print(f'Открываем {self}.')
+        #print(f'Открываем {self}.')
 
     def __str__(self):
         return f'Счет игрока {self.name}'
@@ -23,7 +23,7 @@ class Bill:
     
     def bet(self, count):
         self.money -= count
-        print(f'Со {self} делаем ставку на {count} единиц.')
+        #print(f'Со {self} делаем ставку на {count} единиц.')
     
     def resalt_of_bet(self, count):
         self.money += count
