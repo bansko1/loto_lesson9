@@ -12,6 +12,17 @@ def prn():  # Распечатывание двух карточек
     print('Карточка компьютера')
     card_comp.print_card()
     print('*******************')
+    
+def prn_save(text):
+    
+    now = datetime.now().strftime("%d-%m-%Y")
+    print(f'{now} {text}')
+    hist = f'{now} {text}'
+    histores[name].append(hist)
+    with open(FILE_HISTORY, 'w') as f:
+        json.dump(histores, f)
+    with open(FILE_NAME, 'w') as f:
+        json.dump(bills, f)
 
 FILE_NAME = 'bills.json'
 FILE_HISTORY = 'histores.json'
@@ -41,22 +52,22 @@ while True:
         name = input('Введите имя игрока:')
         bill = Bill(name)
         
-        if name not in bills:
-            now = datetime.now().strftime("%d-%m-%Y")            
+        if name not in bills: # У игрока name нет счета в bills
+            
             count = int(input(f'Внесите сумму:'))
             bill.money = count
             bills[name] = count
+            now = datetime.now().strftime("%d-%m-%Y")
             print(f'Создан и открыт {bill} на {count} единиц.')
-            list = []
-            hist = f'{now} создан {bill} на {count} единиц.'
-            list.append(hist)
-            histores[name] = list
-
+            lst = []
+            hist = f'{now} Создан и открыт {bill} на {count} единиц.'
+            lst.append(hist)
+            histores[name] = lst
             with open(FILE_HISTORY, 'w') as f:
                 json.dump(histores, f)
             with open(FILE_NAME, 'w') as f:
                 json.dump(bills, f)
-        else:
+        else: # У игрока есть счет на сумму bills[name]
             bill.money = bills[name]
             print(f'Открыт {bill}. На счете {bills[name]} единиц.')
         
@@ -64,13 +75,17 @@ while True:
         count = int(input(f'Внесите сумму на {bill}:'))
         bill.add(count)
         bills[name] = bill.money
-        now = datetime.now().strftime("%d-%m-%Y")
-        print(f'{bill} пополнен на {count} единиц.')
-        hist = f'{now} {bill} пополнен на {count} единиц.'
-        histores[name].append(hist)
+        
+        prn_save(f'{bill} пополнен на {count} единиц.')
+        # now = datetime.now().strftime("%d-%m-%Y")
+        # print(f'{now} {bill} пополнен на {count} единиц.')
+        # hist = f'{now} {bill} пополнен на {count} единиц.'
+        # histores[name].append(hist)
 
-        with open(FILE_HISTORY, 'w') as f:
-           json.dump(histores, f)
+        # with open(FILE_HISTORY, 'w') as f:
+        #     json.dump(histores, f)
+        # with open(FILE_NAME, 'w') as f:
+        #     json.dump(bills, f)
            
     elif choise == '3': # Узнать сумму на счете.
         print(f'Остаток на {bill} - {bill.money} единиц.')
@@ -88,25 +103,30 @@ while True:
             print(f'Игра в долг не допускается. Пополните {bill}.')
             break
 
-        my_bet = int(input(f'Сделайте ставку не более чем {bill.money}:'))
+        my_bet = int(input(f'Сделайте ставку не более чем на {bill.money}:'))
         if my_bet > bill.money:
             print(f'Пополните {bill}')
             break
             
         bill.bet(my_bet)
-        print(f'Игрок {name} играет в лотто. Ставка {my_bet} единиц принята.')
-        hist = f'{now} Игра в лото.  Со {bill} сделана ставка на {my_bet} единиц.'
-        histores[name].append(hist)
-        with open(FILE_HISTORY, 'w') as f:
-            json.dump(histores, f)
+        bills[name] = bill.money
+        prn_save(f'Со {bill} сделана ставка на {my_bet} единиц.')
+        # now = datetime.now().strftime("%d-%m-%Y")
+        # print(f'{now} Игра в лото. Со {bill} сделана ставка на {my_bet} единиц.')
+        # hist = f'{now} Игра в лото. Со {bill} сделана ставка на {my_bet} единиц.'
+        # histores[name].append(hist)
+        # with open(FILE_HISTORY, 'w') as f:
+        #     json.dump(histores, f)
+        # with open(FILE_NAME, 'w') as f:
+        #     json.dump(bills, f)            
             
         param = 30  # сколько всего бочонков 30, 60, 90
         cart_param = 9  # сколько чисел в карточке 9, 12, 15 (в три ряда по возрастанию)
 
         card_man = Random_map(param, cart_param)
         card_comp = Random_map(param, cart_param)
-
         list_digit = list(range(1, param + 1))
+
         for n in range(param):  # Проход по всем бочонкам
             digit = random.choice(list_digit)
             list_digit.remove(digit)
@@ -116,23 +136,28 @@ while True:
             letter = input('Зачеркнуть цифру? (y/n)')
             if letter == 'y':
                 if not card_man.examin(digit):
-                    
-                    print(f'Цифры нет в карточке. {bill.name} проиграл - ставка потеряна.')
-                    now = datetime.now().strftime("%d-%m-%Y")
-                    hist = f'{now} Проигрыш в лото. {bill} уменьшен на {my_bet} единиц.'
-                    histores[name].append(hist)
-                    with open(FILE_HISTORY, 'w') as f:
-                        json.dump(histores, f)
+                    prn_save(f'Проигрыш в лото - цифры нет в карточке.')
+                    # now = datetime.now().strftime("%d-%m-%Y")
+                    # print(f'{now} Проигрыш в лото - цифры нет в карточке.')                    
+                    # hist = f'{now} Проигрыш в лото - цифры нет в карточке.'
+                    # histores[name].append(hist)
+                    # with open(FILE_HISTORY, 'w') as f:
+                    #     json.dump(histores, f)
+                    # with open(FILE_NAME, 'w') as f:
+                    #     json.dump(bills, f)
                     break
                 # Определяем есть ли в карточке число digit и убираем его в карточке игрока, если есть
                 card_man.change(digit)
             if card_man.examin(digit):
-                print(f'Цифра есть в карточке. {bill.name} проиграл - ставка потеряна.')
-                now = datetime.now().strftime("%d-%m-%Y")
-                hist = f'{now} Проигрыш в лото. {bill} уменьшен на {my_bet} единиц.'
-                histores[name].append(hist)
-                with open(FILE_HISTORY, 'w') as f:
-                    json.dump(histores, f)                
+                prn_save(f'Проигрыш в лото - цифра есть в карточке.')
+                # now = datetime.now().strftime("%d-%m-%Y")
+                # print(f'{now} Проигрыш в лото - цифра есть в карточке.')
+                # hist = f'{now} Проигрыш в лото - цифра есть в карточке.'
+                # histores[name].append(hist)
+                # with open(FILE_HISTORY, 'w') as f:
+                #     json.dump(histores, f)
+                # with open(FILE_NAME, 'w') as f:
+                #     json.dump(bills, f)                
                 break
             # Определяем есть ли в карточке digit и убираем ее в карточке компьютера
             card_comp.change(digit)
@@ -148,33 +173,42 @@ while True:
             if not (card_men_1str or card_men_2str or card_men_3str) and (
                     card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'{bill.name} выиграл {my_bet} + {my_bet} единиц. Поздравляем!!!')
                 bill.add(2*my_bet)
-                now = datetime.now().strftime("%d-%m-%Y")
-                hist = f'{now} Выигрыш в лото. {bill} увеличен на {my_bet} единиц.'
-                histores[name].append(hist)
-                with open(FILE_HISTORY, 'w') as f:
-                    json.dump(histores, f)
+                prn_save(f'Выигрыш в лото. На {bill} добавляется {my_bet*2} единиц.')
+                # now = datetime.now().strftime("%d-%m-%Y")
+                # print(f'{now} Выигрыш в лото. На {bill} добавляется {my_bet*2} единиц.')
+                # hist = f'{now} Выигрыш в лото. На {bill} добавляется {my_bet*2} единиц.'
+                # histores[name].append(hist)
+                # with open(FILE_HISTORY, 'w') as f:
+                #     json.dump(histores, f)
+                # with open(FILE_NAME, 'w') as f:
+                #     json.dump(bills, f)                    
                 break
             elif (card_men_1str or card_men_2str or card_men_3str) and not (
                     card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Компьютер раньше. {bill.name} проиграл - ставка потеряна. ')
-                now = datetime.now().strftime("%d-%m-%Y")
-                hist = f'{now} Проигрыш в лото. {bill} уменьшен на {my_bet} единиц.'
-                histores[name].append(hist)
-                with open(FILE_HISTORY, 'w') as f:
-                    json.dump(histores, f)                
+                prn_save(f'Проигрыш в лото - компьютер раньше.')
+                # now = datetime.now().strftime("%d-%m-%Y")
+                # print(f'{now} Проигрыш в лото - компьютер раньше.')                
+                # hist = f'{now} Проигрыш в лото - компьютер раньше.'
+                # histores[name].append(hist)
+                # with open(FILE_HISTORY, 'w') as f:
+                #     json.dump(histores, f)
+                # with open(FILE_NAME, 'w') as f:
+                #     json.dump(bills, f)                                    
                 break
             elif not (
                     card_men_1str or card_men_2str or card_men_3str or card_comp_1str or card_comp_2str or card_comp_3str):
                 prn()
-                print(f'Ничья. Ставка возвращается.')
-                now = datetime.now().strftime("%d-%m-%Y")
-                hist = f'{now} Ньчья - все цифры зачеркнуты одновременно. {bill} без изенений.'
-                histores[name].append(hist)
-                with open(FILE_HISTORY, 'w') as f:
-                    json.dump(histores, f)
+                prn_save(f'Ничья в лото - зачеркнуто одновременно. На {bill} возвращается {my_bet} единиц.')
+                # now = datetime.now().strftime("%d-%m-%Y")
+                # print(f'{now} Ничья - все цифры зачеркнуты одновременно. На {bill} возвращается {my_bet} единиц.')                
+                # hist = f'{now} Ничья - все цифры зачеркнуты одновременно. На {bill} возвращается {my_bet} единиц.'
+                # histores[name].append(hist)
+                # with open(FILE_HISTORY, 'w') as f:
+                #     json.dump(histores, f)
+                # with open(FILE_NAME, 'w') as f:
+                #     json.dump(bills, f)                    
                 bill.add(my_bet)
                 break
             
